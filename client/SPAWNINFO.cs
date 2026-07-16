@@ -21,7 +21,9 @@ namespace Structures
         public float Y { get; set; }
 
         public float Z { get; set; }
-        public byte Class { get; set; }
+        public byte Class { get; set; }        // primary class id
+        public byte Class2 { get; set; }       // EQL secondary class id (0 = none)
+        public byte Class3 { get; set; }       // EQL tertiary class id (0 = none)
 
         public byte Level { get; set; }
         public int Race { get; set; }
@@ -165,6 +167,9 @@ namespace Structures
             Lastname = BytesToString(b, 74 + offset, 22);
 
             flags = (PacketType)BitConverter.ToInt32(b, 96 + offset);
+
+            Class2 = b[100 + offset];   // EQL secondary/tertiary class ids appended after flags
+            Class3 = b[101 + offset];
 
             if (flags == PacketType.Player)
             {

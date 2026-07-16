@@ -73,23 +73,26 @@ namespace myseq
 
             if (listType == 0) // Add Columns to Spawnlist window
             {
-                ColumnsAdd("Name", Settings.Default.c1w, HorizontalAlignment.Left);         //0
-                ColumnsAdd("Level", Settings.Default.c2w, HorizontalAlignment.Left);        //1
-                ColumnsAdd("Class", Settings.Default.c3w, HorizontalAlignment.Left);        //2
-                ColumnsAdd("Primary", Settings.Default.c3w, HorizontalAlignment.Left);      //3
-                ColumnsAdd("Offhand", Settings.Default.c3w, HorizontalAlignment.Left);      //4
-                ColumnsAdd("Race", Settings.Default.c4w, HorizontalAlignment.Left);         //5
-                ColumnsAdd("Owner", Settings.Default.c4w, HorizontalAlignment.Left);        //6
-                // "Last Name" column removed (EQL) -- shifted all following spawn-list SubItems down by 1.
-                ColumnsAdd("Type", Settings.Default.c6w, HorizontalAlignment.Left);         //7
-                ColumnsAdd("Invis", Settings.Default.c7w, HorizontalAlignment.Left);        //8
-                ColumnsAdd("Run Speed", Settings.Default.c8w, HorizontalAlignment.Left);    //9
-                ColumnsAdd("SpawnID", Settings.Default.c9w, HorizontalAlignment.Left);      //10
-                ColumnsAdd("Spawn Time", Settings.Default.c10w, HorizontalAlignment.Left);  //11
-                ColumnsAdd("X", Settings.Default.c11w, HorizontalAlignment.Left);           //12
-                ColumnsAdd("Y", Settings.Default.c12w, HorizontalAlignment.Left);           //13
-                ColumnsAdd("Z", Settings.Default.c13w, HorizontalAlignment.Left);           //14
-                ColumnsAdd("Distance", Settings.Default.c14w, HorizontalAlignment.Left);    //15
+                // EQL: "Last Name" removed; single "Class" split into Primary/Secondary/Tertiary Class
+                // (Hero's-Journey multiclass). SubItems indices below match these column positions.
+                ColumnsAdd("Name", Settings.Default.c1w, HorizontalAlignment.Left);            //0
+                ColumnsAdd("Level", Settings.Default.c2w, HorizontalAlignment.Left);           //1
+                ColumnsAdd("Primary Class", Settings.Default.c3w, HorizontalAlignment.Left);   //2
+                ColumnsAdd("Secondary Class", Settings.Default.c3w, HorizontalAlignment.Left); //3
+                ColumnsAdd("Tertiary Class", Settings.Default.c3w, HorizontalAlignment.Left);  //4
+                ColumnsAdd("Primary", Settings.Default.c3w, HorizontalAlignment.Left);         //5
+                ColumnsAdd("Offhand", Settings.Default.c3w, HorizontalAlignment.Left);         //6
+                ColumnsAdd("Race", Settings.Default.c4w, HorizontalAlignment.Left);            //7
+                ColumnsAdd("Owner", Settings.Default.c4w, HorizontalAlignment.Left);           //8
+                ColumnsAdd("Type", Settings.Default.c6w, HorizontalAlignment.Left);            //9
+                ColumnsAdd("Invis", Settings.Default.c7w, HorizontalAlignment.Left);           //10
+                ColumnsAdd("Run Speed", Settings.Default.c8w, HorizontalAlignment.Left);       //11
+                ColumnsAdd("SpawnID", Settings.Default.c9w, HorizontalAlignment.Left);         //12
+                ColumnsAdd("Spawn Time", Settings.Default.c10w, HorizontalAlignment.Left);     //13
+                ColumnsAdd("X", Settings.Default.c11w, HorizontalAlignment.Left);              //14
+                ColumnsAdd("Y", Settings.Default.c12w, HorizontalAlignment.Left);              //15
+                ColumnsAdd("Z", Settings.Default.c13w, HorizontalAlignment.Left);              //16
+                ColumnsAdd("Distance", Settings.Default.c14w, HorizontalAlignment.Left);       //17
                 //            SpawnList.ColumnsAdd("Guild", Settings.Default.c14w, HorizontalAlignment.Left); //17
             }
             else if (listType == 1)     // Add the Columns to the Spawn Timer Window
@@ -514,9 +517,9 @@ namespace myseq
                 if (ListType == 0)
                 {
                     addMapLabelToolStripMenuItem.Enabled = true;
-                    f1.alertX = float.Parse(listView.Items[sel[0]].SubItems[12].Text);
-                    f1.alertY = float.Parse(listView.Items[sel[0]].SubItems[13].Text);
-                    f1.alertZ = float.Parse(listView.Items[sel[0]].SubItems[14].Text);
+                    f1.alertX = float.Parse(listView.Items[sel[0]].SubItems[14].Text);
+                    f1.alertY = float.Parse(listView.Items[sel[0]].SubItems[15].Text);
+                    f1.alertZ = float.Parse(listView.Items[sel[0]].SubItems[16].Text);
                 }
                 else if (ListType == 1)
                 {
@@ -581,7 +584,7 @@ namespace myseq
 
         private void ListType0(ListView.SelectedIndexCollection sel)
         {
-            Mobname = listView.Items[sel[0]].SubItems[16].Text.FilterMobName();
+            Mobname = listView.Items[sel[0]].SubItems[18].Text.FilterMobName();
             Mobname = Mobname.Replace("_", " ");
             Mobname = Mobname.Trim();
             //smoblevel = "";
@@ -707,7 +710,7 @@ namespace myseq
                 if (ListType == 0)
 
                 {
-                    eq?.SetSelectedID(int.Parse(listView.Items[sel[0]].SubItems[10].Text));
+                    eq?.SetSelectedID(int.Parse(listView.Items[sel[0]].SubItems[12].Text));
                 }
                 else if (ListType == 1)
                 {

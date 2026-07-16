@@ -519,7 +519,7 @@ namespace myseq
                     if (mob.SpeedRun != si.SpeedRun)
                     {
                         mob.SpeedRun = si.SpeedRun;
-                        mob.listitem.SubItems[9].Text = si.SpeedRun.ToString();
+                        mob.listitem.SubItems[11].Text = si.SpeedRun.ToString();
                     }
 
                     if ((mob.X != si.X) || (mob.Y != si.Y) || (mob.Z != si.Z))
@@ -575,7 +575,7 @@ namespace myseq
                 mob.OwnerID = si.OwnerID;
                 MobHasOwner(mob);
                 mob.Hide = si.Hide;
-                mob.listitem.SubItems[8].Text = si.Hide.GetHideStatus();
+                mob.listitem.SubItems[10].Text = si.Hide.GetHideStatus();
             }
         }
 
@@ -584,7 +584,7 @@ namespace myseq
             if (mob.Race != si.Race)
             {
                 mob.Race = si.Race;
-                mob.listitem.SubItems[5].Text = GetRace(si.Race);
+                mob.listitem.SubItems[7].Text = GetRace(si.Race);
             }
         }
 
@@ -593,7 +593,7 @@ namespace myseq
             if (mob.Offhand != si.Offhand)
             {
                 mob.Offhand = si.Offhand;
-                mob.listitem.SubItems[4].Text = si.Offhand > 0 ? ItemNumToString(si.Offhand) : "";
+                mob.listitem.SubItems[6].Text = si.Offhand > 0 ? ItemNumToString(si.Offhand) : "";
             }
         }
 
@@ -602,16 +602,20 @@ namespace myseq
             if (mob.Primary != si.Primary)
             {
                 mob.Primary = si.Primary;
-                mob.listitem.SubItems[3].Text = si.Primary > 0 ? ItemNumToString(si.Primary) : "";
+                mob.listitem.SubItems[5].Text = si.Primary > 0 ? ItemNumToString(si.Primary) : "";
             }
         }
 
         private void GetMobClass(Spawninfo si, Spawninfo mob)
         {
-            if (mob.Class != si.Class)
+            if (mob.Class != si.Class || mob.Class2 != si.Class2 || mob.Class3 != si.Class3)
             {
                 mob.Class = si.Class;
-                mob.listitem.SubItems[2].Text = GetClass(si.Class);
+                mob.Class2 = si.Class2;
+                mob.Class3 = si.Class3;
+                mob.listitem.SubItems[2].Text = GetClass(si.Class);   // Primary Class
+                mob.listitem.SubItems[3].Text = ClassOpt(si.Class2);  // Secondary Class
+                mob.listitem.SubItems[4].Text = ClassOpt(si.Class3);  // Tertiary Class
             }
         }
 
@@ -691,14 +695,14 @@ namespace myseq
                     }
 
                     // Set the owner's name in the UI
-                    mob.listitem.SubItems[6].Text = owner.Name.FixMobName();
-                    mob.listitem.SubItems[10].Text = mob.SpawnID.ToString();
+                    mob.listitem.SubItems[8].Text = owner.Name.FixMobName();
+                    mob.listitem.SubItems[12].Text = mob.SpawnID.ToString();
                     return;
                 }
             }
             // If no valid owner was found, display the OwnerID as a fallback
-            mob.listitem.SubItems[6].Text = mob.OwnerID.ToString();
-            mob.listitem.SubItems[10].Text = mob.SpawnID.ToString();
+            mob.listitem.SubItems[8].Text = mob.OwnerID.ToString();
+            mob.listitem.SubItems[12].Text = mob.SpawnID.ToString();
         }
 
         private void SetMobAsPet(Spawninfo mob)
@@ -818,20 +822,20 @@ namespace myseq
         private void PopulateListview(Spawninfo si, Spawninfo mob)
         {
             mob.X = si.X;
-            mob.listitem.SubItems[12].Text = si.X.ToString();
+            mob.listitem.SubItems[14].Text = si.X.ToString();
 
             mob.Y = si.Y;
-            mob.listitem.SubItems[13].Text = si.Y.ToString();
+            mob.listitem.SubItems[15].Text = si.Y.ToString();
 
             mob.Z = si.Z;
-            mob.listitem.SubItems[14].Text = si.Z.ToString();
+            mob.listitem.SubItems[16].Text = si.Z.ToString();
 
-            mob.listitem.SubItems[15].Text = si.SpawnDistance(si, GamerInfo).ToString("#.00");
+            mob.listitem.SubItems[17].Text = si.SpawnDistance(si, GamerInfo).ToString("#.00");
         }
 
         private void UpdateMobTypes(Spawninfo mob)
         {
-            mob.listitem.SubItems[7].Text = mob.Type.GetSpawnType();
+            mob.listitem.SubItems[9].Text = mob.Type.GetSpawnType();
 
             if (mob.Type == 2 || mob.Type == 3)
             {
@@ -970,22 +974,24 @@ namespace myseq
             // Create a list of subitems with formatted values and add them in one go
             var subItems = new List<string>
     {
-        si.Level.ToString(),                   // Level
-        GetClass(si.Class),                    // Class
-        si.PrimaryName,                        // Primary weapon name
-        si.OffhandName,                        // Offhand weapon name
-        GetRace(si.Race),                      // Race
-        OwnerFlag(si),                         // Ownership flag
-        si.Type.GetSpawnType(),                // Spawn type description
-        si.Hide.GetHideStatus(),               // Hide status (visible, hidden, etc.)
-        si.SpeedRun.ToString(),                // Running speed of the spawn
-        si.SpawnID.ToString(),                 // Spawn ID
-        DateTime.Now.ToLongTimeString(),       // Current time
-        si.X.ToString("#.00"),                 // X coordinate formatted
-        si.Y.ToString("#.00"),                 // Y coordinate formatted
-        si.Z.ToString("#.00"),                 // Z coordinate formatted
-        si.SpawnDistance(si, GamerInfo).ToString("#.00"), // Distance to gamer
-        si.Name.FixMobName()                   // Fixed or adjusted mob name
+        si.Level.ToString(),                   // 1 Level
+        GetClass(si.Class),                    // 2 Primary Class
+        ClassOpt(si.Class2),                   // 3 Secondary Class (blank if none)
+        ClassOpt(si.Class3),                   // 4 Tertiary Class  (blank if none)
+        si.PrimaryName,                        // 5 Primary weapon name
+        si.OffhandName,                        // 6 Offhand weapon name
+        GetRace(si.Race),                      // 7 Race
+        OwnerFlag(si),                         // 8 Ownership flag
+        si.Type.GetSpawnType(),                // 9 Spawn type description
+        si.Hide.GetHideStatus(),               // 10 Hide status (visible, hidden, etc.)
+        si.SpeedRun.ToString(),                // 11 Running speed of the spawn
+        si.SpawnID.ToString(),                 // 12 Spawn ID
+        DateTime.Now.ToLongTimeString(),       // 13 Current time
+        si.X.ToString("#.00"),                 // 14 X coordinate formatted
+        si.Y.ToString("#.00"),                 // 15 Y coordinate formatted
+        si.Z.ToString("#.00"),                 // 16 Z coordinate formatted
+        si.SpawnDistance(si, GamerInfo).ToString("#.00"), // 17 Distance to gamer
+        si.Name.FixMobName()                   // 18 Fixed or adjusted mob name (hidden slot)
                                                // ,GuildNumToString(si.Guild);
     };
 
@@ -1131,6 +1137,9 @@ namespace myseq
         }
 
         public string GetClass(int num) => ArrayIndextoStr(Classes, num);
+
+        // Secondary/tertiary class columns: 0 means "no extra class" -> blank (not "Unknown0").
+        public string ClassOpt(int num) => num == 0 ? "" : GetClass(num);
 
         public string GetRace(int num) => num == 2250 ? "Interactive Object" : ArrayIndextoStr(Races, num);
 

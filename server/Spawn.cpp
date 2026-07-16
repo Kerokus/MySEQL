@@ -67,6 +67,8 @@ void Spawn::init(IniReaderInterface* ir_intf)
 	setOffset(OT_race, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "RaceOffset"), "Race");
 	setOffset(OT_primary, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "PrimaryOffset"), "Primary");
 	setOffset(OT_offhand, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "OffhandOffset"), "Offhand");
+	// EQL: multiclass bitmask (dword). Secondary/tertiary = its set bits minus the primary class.
+	setOffset(OT_multiclass, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "MultiClassOffset"), "MultiClass");
 	// Determine how many bytes we should read for each spawn
 	largestOffset = 0;
 	for (int i = 0; i < OT_max; i++)
@@ -91,6 +93,8 @@ void Spawn::packNetBufferStrings(UINT flags, const string& firstName, const stri
 	firstName._Copy_s(tempNetBuffer.name, 30, 30);
 	lastName._Copy_s(tempNetBuffer.lastName, 22, 22);
 	tempNetBuffer.flags = flags;
+	tempNetBuffer.class2 = 0;   // default; set in packNetBufferRaw for real spawns
+	tempNetBuffer.class3 = 0;
 }
 
 void Spawn::packNetBufferRaw(UINT flags, QWORD _this)
@@ -111,10 +115,22 @@ void Spawn::packNetBufferRaw(UINT flags, QWORD _this)
 	}
 
 	tempNetBuffer.type = extractRawByte(OT_type);
-	// EQL: class is a bitmask dword -> convert to primary (lowest) class id; else read as an id byte.
+	// Primary class: EQL uses a plain id byte @ ClassOffset (0x10FC). (ClassIsBitmask=1 keeps the old
+	// bitmask->lowest-bit behavior for compatibility.)
 	tempNetBuffer._class = classIsBitmask
 		? lowestSetBitIndex(extractRawDWord(OT_class))
 		: extractRawByte(OT_class);
+	// Secondary/tertiary class: the multiclass bitmask's set bits, excluding the primary class id.
+	{
+		DWORD mcMask = offsets[OT_multiclass] ? extractRawDWord(OT_multiclass) : 0;
+		BYTE extras[2] = { 0, 0 };
+		int n = 0;
+		for (int bit = 1; bit <= 31 && n < 2; ++bit)
+			if (((mcMask >> bit) & 1u) && bit != tempNetBuffer._class)
+				extras[n++] = (BYTE)bit;
+		tempNetBuffer.class2 = extras[0];
+		tempNetBuffer.class3 = extras[1];
+	}
 
 	if (race8 == true) {
 		// Use an 8 bit race, and a 16 bit material id

@@ -194,7 +194,7 @@ namespace Structures
         {
             var offset = 0;
 
-            const int SIZE_OF_PACKET = 100; //104 on new server
+            const int SIZE_OF_PACKET = 102; // EQL: 100 base + 2 bytes (secondary/tertiary class)
 
             try
             {

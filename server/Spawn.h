@@ -55,6 +55,8 @@ struct netBuffer_t
 	char lastName[22];
 
 	UINT flags;
+
+	BYTE class2, class3;   // EQL Hero's-Journey secondary/tertiary class ids (0 = none)
 };
 
 #pragma pack(pop)
@@ -67,7 +69,7 @@ public:
 	enum offset_types {
 		OT_name, OT_lastname, OT_x, OT_y, OT_z, OT_speed, OT_heading,
 		OT_id, OT_owner, OT_race, OT_class, OT_type, OT_level, OT_hidden,
-		OT_primary, OT_offhand, OT_prev, OT_next, OT_max
+		OT_primary, OT_offhand, OT_prev, OT_next, OT_multiclass, OT_max
 	};
 
 	UINT largestOffset;
