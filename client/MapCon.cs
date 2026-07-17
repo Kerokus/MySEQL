@@ -278,7 +278,8 @@ namespace myseq
             MobInfoLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom
             | AnchorStyles.Left
             | AnchorStyles.Right;
-            MobInfoLabel.BackColor = Color.White;
+            MobInfoLabel.BackColor = ThemeManager.Current.PanelBack;
+            MobInfoLabel.ForeColor = ThemeManager.Current.Text;
             MobInfoLabel.BorderStyle = BorderStyle.FixedSingle;
             MobInfoLabel.Font = Settings.Default.TargetInfoFont;
             MobInfoLabel.Location = new Point(0, 20);
@@ -1276,7 +1277,9 @@ namespace myseq
                     tableLayoutPanel1.RowStyles[0].Height = (int)gt.Height + 7;
                 }
             }
-            MobInfoLabel.BackColor = Color.White;
+            // Default "no target" state: theme-aware so it isn't a white box in dark mode.
+            MobInfoLabel.BackColor = ThemeManager.Current.PanelBack;
+            MobInfoLabel.ForeColor = ThemeManager.Current.Text;
             return "Spawn Information Window";
         }
 
@@ -1355,6 +1358,9 @@ namespace myseq
             {
                 MobInfoLabel.BackColor = Color.LightGray;
             }
+
+            // Selected-target con backgrounds are light colors -> keep the info text dark.
+            MobInfoLabel.ForeColor = Color.Black;
         }
 
         private StringBuilder SpawnInfoWindow(Spawninfo si)
