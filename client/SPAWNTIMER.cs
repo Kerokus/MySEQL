@@ -355,7 +355,11 @@ namespace myseq
             // Assign the appropriate color based on remaining time
             if (SpawnTimeRemaining < 1 || SpawnTimeRemaining > 120)
             {
-                ItmSpawnTimerList.ForeColor = Color.Black;
+                // Idle/normal text: black on light themes, light blue on dark (black-on-dark is unreadable).
+                ItmSpawnTimerList.ForeColor =
+                    string.Equals(ThemeManager.Current.Name, "Dark", StringComparison.OrdinalIgnoreCase)
+                        ? Color.LightBlue
+                        : Color.Black;
             }
             else if (SpawnTimeRemaining < 30)
             {
