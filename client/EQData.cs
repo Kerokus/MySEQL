@@ -1254,6 +1254,17 @@ namespace myseq
             GamerInfo.Heading = si.Heading;
             GamerInfo.Hide = si.Hide;
             GamerInfo.SpeedRun = si.SpeedRun;
+
+            // Con colors key off the gamer's level. The server now provides it, so track it by default
+            // (previously it was only set via the optional "Base Concolor on X" path -> level stayed 0
+            // -> everything conned red). The manual override (GConBaseName + LevelOverride) still wins
+            // via AdjustConLevel when the user opts in.
+            if (GamerInfo.Level != si.Level && GConBaseName.Length <= 1)
+            {
+                GamerInfo.Level = si.Level;
+                spawnColor.FillConColors(GamerInfo);
+                UpdateMobListColors();
+            }
         }
 
         private void AdjustConLevel(Spawninfo si)
