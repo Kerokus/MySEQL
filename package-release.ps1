@@ -1,8 +1,9 @@
 # Builds a self-contained MySEQL release zip from the current Release build outputs.
 # Run AFTER building both projects (Release|x64).  Usage:  .\package-release.ps1 -Version 1.0.0
 #
-# Maps are intentionally NOT bundled (users supply their own; we don't redistribute third-party
-# map packs). The client creates an empty maps\ folder on first run.
+# Everything lands in one flat folder (server + client contents together) so users unzip and run
+# in place. Maps are intentionally NOT bundled (users supply their own; we don't redistribute
+# third-party map packs). The client creates an empty maps\ folder next to the exe on first run.
 param(
     [string]$Version = "1.0.0"
 )
@@ -13,30 +14,28 @@ $cr    = Join-Path $root "client\bin\x64\Release"
 $sr    = Join-Path $root "server\x64\Release"
 
 Remove-Item (Join-Path $root "dist") -Recurse -Force -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force "$stage\server","$stage\client\cfg" | Out-Null
+New-Item -ItemType Directory -Force "$stage\cfg" | Out-Null
 
-# --- server: standalone exe (statically linked) + inis ---
-Copy-Item "$sr\server.exe","$sr\myseqserver.ini","$sr\config.ini" "$stage\server"
-
-# --- client: exe + dlls + config + cfg\ (skip pdb/xml/manifest/application/app.publish/maps) ---
-Copy-Item "$cr\MySEQ.exe","$cr\MySEQ.exe.config" "$stage\client"
-Copy-Item "$cr\*.dll" "$stage\client"
-Copy-Item "$cr\cfg\*" "$stage\client\cfg" -Recurse
+# --- server (standalone exe + inis) and client (exe + dlls + config) together in the release root ---
+Copy-Item "$sr\server.exe","$sr\myseqserver.ini","$sr\config.ini" $stage
+Copy-Item "$cr\MySEQ.exe","$cr\MySEQ.exe.config" $stage
+Copy-Item "$cr\*.dll" $stage                       # skip pdb/xml/manifest/application/app.publish/maps
+Copy-Item "$cr\cfg\*" "$stage\cfg" -Recurse
 
 # --- quick-start note ---
 @"
-MySEQL - EverQuest Legends radar (server + client)
+MySEQL - EverQuest Legends radar (server + client, same folder)
 
 SETUP
   1. Launch EverQuest Legends and log in to your character.
-  2. Run  server\server.exe   (if it can't read the game, right-click > Run as administrator).
-  3. Run  client\MySEQ.exe , then click Connect (defaults to 127.0.0.1:5555).
+  2. Run  server.exe   (if it can't read the game, right-click > Run as administrator).
+  3. Run  MySEQ.exe , then click Connect (defaults to 127.0.0.1:5555).
 
 MAPS (not included)
   This build ships without maps. To see the zone drawn under the spawns, put EQ map .txt files in a
-  'maps' folder next to MySEQ.exe (client\maps\). You can organize multiple sets as sub-folders and
-  switch between them from the  Map > Use Map Pack  menu. Map files are widely available online;
-  they are not distributed here.
+  'maps' folder next to MySEQ.exe. You can organize multiple sets as sub-folders and switch between
+  them from the  Map > Use Map Pack  menu. Map files are widely available online; they are not
+  distributed here.
 
 NOTES
   - Requires Windows 10/11 (.NET Framework 4.8 is built in). Run the client on the same PC as the game.
