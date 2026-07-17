@@ -99,6 +99,14 @@ The server window shows the zone (`nro`), your character name, and live spawn co
 > copy `client\cfg\*` into `client\bin\x64\Release\cfg\` — otherwise every class/race shows
 > "id: Unknown".
 
+## Maps
+
+**Maps are not included** in this repo or in releases — EQ map files are third-party community work
+and are not redistributed here. To draw the zone under the spawns, create a `maps` folder next to the
+client exe (`client\maps\`) and add EQ map `.txt` files yourself; the client also creates this folder
+on first run. Multiple map sets can be kept as sub-folders and swapped from the **Map → Use Map Pack**
+menu. (The `maps` folder is git-ignored.)
+
 ## Status
 
 **Working:** spawn radar (names + positions), zone auto-map, level, type (PC/NPC/corpse), heading,
