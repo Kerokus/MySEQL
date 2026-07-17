@@ -166,6 +166,7 @@ namespace myseq
             this.mnuFollowTarget = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuKeepCentered = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAutoExpand = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuMapPack = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMapReset = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelpMain = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
@@ -1029,6 +1030,7 @@ namespace myseq
             this.mnuKeepCentered,
             this.mnuAutoExpand,
             toolStripSeparator13,
+            this.mnuMapPack,
             this.mnuMapReset});
             this.mnuMapSettingsMain.Name = "mnuMapSettingsMain";
             this.mnuMapSettingsMain.Size = new System.Drawing.Size(43, 20);
@@ -1405,8 +1407,20 @@ namespace myseq
             this.mnuAutoExpand.Text = "Auto Expand";
             this.mnuAutoExpand.Click += new System.EventHandler(this.MnuAutoExpand_Click);
             // 
+            // mnuMapPack
+            //
+            // Seed one placeholder child so the sub-menu arrow shows and DropDownOpening
+            // fires; the handler clears this and rebuilds the list from the maps folder.
+            this.mnuMapPack.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            new System.Windows.Forms.ToolStripMenuItem("Default")});
+            this.mnuMapPack.Name = "mnuMapPack";
+            this.mnuMapPack.Size = new System.Drawing.Size(195, 22);
+            this.mnuMapPack.Text = "Use Map Pack";
+            this.mnuMapPack.ToolTipText = "Switch between map sets (sub-folders of the maps directory).";
+            this.mnuMapPack.DropDownOpening += new System.EventHandler(this.MnuMapPack_DropDownOpening);
+            //
             // mnuMapReset
-            // 
+            //
             this.mnuMapReset.Name = "mnuMapReset";
             this.mnuMapReset.Size = new System.Drawing.Size(195, 22);
             this.mnuMapReset.Text = "Reset Map";
@@ -2626,6 +2640,7 @@ namespace myseq
         private ToolStripMenuItem mnuKeepCentered;
         private ToolStripMenuItem mnuAutoExpand;
         private ToolStripMenuItem mnuMapReset;
+        private ToolStripMenuItem mnuMapPack;
         private ToolStripMenuItem mnuHelpMain;
         private ToolStripMenuItem mnuAbout;
         public ToolStripStatusLabel toolStripMouseLocation;

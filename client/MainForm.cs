@@ -693,7 +693,7 @@ namespace myseq
             }
             else
             {
-                var fullmap = Path.Combine(Settings.Default.MapDir, si.Name.Trim());
+                var fullmap = Path.Combine(FileOps.MapPackDir(), si.Name.Trim());
                 foundmap = NotZoningShowLayers(foundmap, fullmap);
             }
             //... Missing map
@@ -1742,6 +1742,70 @@ namespace myseq
         }
 
         private void MnuMapReset_Click(object sender, EventArgs e) => mapPane.MapReset();
+
+        // Rebuild the "Use Map Pack" submenu each time it opens so newly-added
+        // sub-folders show up without a restart, and the active pack is checked.
+        private void MnuMapPack_DropDownOpening(object sender, EventArgs e)
+        {
+            mnuMapPack.DropDownItems.Clear();
+
+            var current = string.IsNullOrEmpty(Settings.Default.MapPack)
+                ? FileOps.DefaultMapPack
+                : Settings.Default.MapPack;
+
+            foreach (var pack in FileOps.GetMapPacks())
+            {
+                var item = new ToolStripMenuItem(pack)
+                {
+                    Tag = pack,
+                    Checked = string.Equals(pack, current, StringComparison.OrdinalIgnoreCase)
+                };
+                item.Click += MnuMapPackItem_Click;
+                mnuMapPack.DropDownItems.Add(item);
+            }
+        }
+
+        private void MnuMapPackItem_Click(object sender, EventArgs e)
+        {
+            if (!(sender is ToolStripMenuItem item) || !(item.Tag is string pack))
+            {
+                return;
+            }
+
+            if (string.Equals(pack, Settings.Default.MapPack, StringComparison.OrdinalIgnoreCase))
+            {
+                return; // already the active pack
+            }
+
+            Settings.Default.MapPack = pack;
+            Settings.Default.Save();
+
+            ReloadCurrentMap();
+        }
+
+        // Re-load the current zone's map from the (possibly just-switched) pack folder.
+        private void ReloadCurrentMap()
+        {
+            if (string.IsNullOrEmpty(CurZone) || CurZone == "CLZ" || CurZone == "DEFAULT" || CurZone == "map_panel")
+            {
+                return;
+            }
+
+            try
+            {
+                var fullmap = Path.Combine(FileOps.MapPackDir(), CurZone.ToLower());
+                if (!NotZoningShowLayers(false, fullmap))
+                {
+                    map.LoadDummyMap();
+                }
+
+                MapConInvalidate();
+            }
+            catch (Exception ex)
+            {
+                LogLib.WriteLine("Error reloading map after pack switch: ", ex);
+            }
+        }
 
         private void MnuShowLayer1_Click(object sender, EventArgs e)
         {

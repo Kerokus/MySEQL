@@ -365,6 +365,9 @@
     <Setting Name="MapDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MapPack" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Default</Value>
+    </Setting>
     <Setting Name="FilterDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

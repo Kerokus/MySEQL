@@ -150,6 +150,49 @@ namespace Structures
 
         public static string StartPath(string folder) => Path.Combine(Application.StartupPath, folder);
 
+        // Name shown for the loose .txt maps sitting directly in the root map folder.
+        public const string DefaultMapPack = "Default";
+
+        // The effective folder to load zone maps from: the root MapDir for the "Default"
+        // pack, otherwise MapDir\<packname>. Falls back to the root if the pack folder is gone.
+        public static string MapPackDir()
+        {
+            var root = Settings.Default.MapDir;
+            var pack = Settings.Default.MapPack;
+
+            if (string.IsNullOrEmpty(pack) || pack.Equals(DefaultMapPack, StringComparison.OrdinalIgnoreCase))
+            {
+                return root;
+            }
+
+            var packDir = Path.Combine(root, pack);
+            return Directory.Exists(packDir) ? packDir : root;
+        }
+
+        // "Default" (the root .txt maps) plus every sub-folder of the root map dir, sorted.
+        public static string[] GetMapPacks()
+        {
+            var root = Settings.Default.MapDir;
+
+            if (string.IsNullOrEmpty(root) || !Directory.Exists(root))
+            {
+                return new[] { DefaultMapPack };
+            }
+
+            try
+            {
+                var packs = Directory.GetDirectories(root)
+                                     .Select(Path.GetFileName)
+                                     .OrderBy(n => n, StringComparer.OrdinalIgnoreCase);
+                return new[] { DefaultMapPack }.Concat(packs).ToArray();
+            }
+            catch (Exception ex)
+            {
+                LogLib.WriteLine("Failed to enumerate map packs: ", ex);
+                return new[] { DefaultMapPack };
+            }
+        }
+
         public static void PurgeFilters(string zoneName)
         {
             DeleteFile(CombineFilter($"custom_{zoneName}.conf"));

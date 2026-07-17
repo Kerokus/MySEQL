@@ -116,7 +116,7 @@ namespace myseq
         {
             try
             {
-                openFileDialog.InitialDirectory = Settings.Default.MapDir;
+                openFileDialog.InitialDirectory = FileOps.MapPackDir();
                 openFileDialog.Filter = "Map Files (*.txt)|*.txt|All Files (*.*)|*.*";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
