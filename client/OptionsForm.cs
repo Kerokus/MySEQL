@@ -1,6 +1,7 @@
 ﻿using myseq.Properties;
 using Structures;
 using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Media;
@@ -16,14 +17,53 @@ namespace myseq
         private readonly string[] buttonTexts = { "None", "Beep", "Speech", "Play wav" };
         private int currentIndex = 0;
 
+        private ComboBox cmbTheme;
+
         public OptionsForm()
         {
             InitializeComponent();
+            SetupThemeDropdown();
             SetCautionTextFromSettings();
             SetHuntTextFromSettings();
             SetAlertTextFromSettings();
             SetDangerTextFromSettings();
             SetOptions(this);
+        }
+
+        // Adds a "Preset Theme" dropdown to the Colors tab. Selecting a preset pushes its color values
+        // into Settings (and refreshes the picker swatches); the window chrome re-themes when the dialog
+        // closes (MainForm.MnuOptions_Click -> ThemeManager.ApplyChrome).
+        private void SetupThemeDropdown()
+        {
+            var lbl = new Label { Text = "Preset Theme:", Location = new Point(8, 214), AutoSize = true };
+            cmbTheme = new ComboBox
+            {
+                Location = new Point(8, 234),
+                Size = new Size(160, 21),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            foreach (var t in ThemeManager.All)
+                cmbTheme.Items.Add(t.Name);
+            cmbTheme.SelectedItem = ThemeManager.Current.Name;      // set before wiring so load doesn't fire it
+            cmbTheme.SelectedIndexChanged += CmbTheme_SelectedIndexChanged;
+            tabColors.Controls.Add(lbl);
+            tabColors.Controls.Add(cmbTheme);
+        }
+
+        private void CmbTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ThemeManager.ApplyToSettings(ThemeManager.ByName(cmbTheme.SelectedItem?.ToString()));
+            RefreshColorSwatches();
+        }
+
+        private void RefreshColorSwatches()
+        {
+            picMapBackgroundColor.BackColor = Settings.Default.BackColor;
+            picListBackgroundColor.BackColor = Settings.Default.ListBackColor;
+            picGridColor.BackColor = Settings.Default.GridColor;
+            picGridLabelColor.BackColor = Settings.Default.GridLabelColor;
+            picRangeCircleColor.BackColor = Settings.Default.RangeCircleColor;
+            picPlayerBorder.BackColor = Settings.Default.PCBorderColor;
         }
 
         private static void SetFgDrawOptions(DrawOptions DrawOpts, OptionsForm options)

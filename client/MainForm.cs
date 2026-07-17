@@ -132,6 +132,9 @@ namespace myseq
 
             Text = BaseTitle;
 
+            // Apply the selected color theme to the window chrome (menus/toolbar/dock/lists).
+            ThemeManager.ApplyChrome(this);
+
             if (Settings.Default.AutoConnect)
             {
                 StartListening();
@@ -941,6 +944,10 @@ namespace myseq
             mapCon.SetUpdateSteps();
             ReloadAlertFiles();
             ResetMapPens();
+
+            // Re-apply the theme in case the preset changed in the options dialog.
+            ThemeManager.ApplyChrome(this);
+
             SpawnList.listView.BackColor = Settings.Default.ListBackColor;
 
             SpawnTimerList.listView.BackColor = Settings.Default.ListBackColor;

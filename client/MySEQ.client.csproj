@@ -186,6 +186,7 @@
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SpawnColors.cs" />
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="FileOps.cs" />
     <Compile Include="FormMethods.cs" />
     <Compile Include="ListComparer.cs">

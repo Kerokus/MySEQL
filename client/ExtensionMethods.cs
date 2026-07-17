@@ -31,6 +31,25 @@ namespace myseq
             }
         }
 
+        // Mirror of MakeVisOnWhite for dark list backgrounds: lighten the con colors that are too dark
+        // to read on dark (dark blue, grey) while keeping their hue meaning. Bright colors (white,
+        // yellow, lime, aqua, red) already read fine on dark and are left alone.
+        public static void MakeVisOnDark(this Spawninfo si)
+        {
+            if (Settings.Default.ListBackColor.GetBrightness() > 0.5f)
+                return; // only adjust when the list background is actually dark
+
+            var fore = si.listitem.ForeColor;
+            if (fore == Color.Blue)
+            {
+                si.listitem.ForeColor = Color.CornflowerBlue;
+            }
+            else if (fore == Color.Gray)
+            {
+                si.listitem.ForeColor = Color.Silver;
+            }
+        }
+
         public static bool ValidateZNum(this string str)
         {
             if (string.IsNullOrEmpty(str))

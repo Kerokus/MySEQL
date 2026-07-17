@@ -860,14 +860,12 @@ namespace myseq
 
             if (mob.listitem.ForeColor == Color.Maroon)
             {
-                mob.listitem.ForeColor = Color.Red;
+                mob.listitem.ForeColor = Color.Red;   // maroon is too dark to read on any background
             }
-            else if (Settings.Default.ListBackColor == Color.White)
-            {
-                // Change the colors to be more visible on white if the background is white
 
-                mob.MakeVisOnWhite();
-            }
+            // Keep con text readable + still hue-informative regardless of the list background.
+            mob.MakeVisOnWhite();   // self-guards: only acts on a white background
+            mob.MakeVisOnDark();    // self-guards: only acts on a dark background
         }
 
         private static void UpdateHidden(Spawninfo si, Spawninfo mob)
