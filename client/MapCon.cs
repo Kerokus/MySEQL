@@ -623,7 +623,10 @@ namespace myseq
             switch (entity)
             {
                 case Spawninfo sp when sp.Name.Length > 0:
-                    f1.alertAddmobname = sp.Name.FilterMobName().Replace("_", " ").TrimEnd(' ');
+                    // Clean the decorated tag to the base display name so the alert matches every instance:
+                    // SearchName() drops the '#' prefix, turns '_' into spaces, and strips the trailing
+                    // instance digits — e.g. "#Trooper_Axlia00" -> "Trooper Axlia".
+                    f1.alertAddmobname = sp.Name.SearchName();
                     SetAlertCoordinates(sp.X, sp.Y, sp.Z);
                     f1.SetContextMenu();
                     return true;

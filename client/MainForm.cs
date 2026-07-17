@@ -92,6 +92,8 @@ namespace myseq
             SpawnList.TabText = "Spawn List";
             SpawnList.VisibleChanged += new EventHandler(SpawnList_VisibleChanged);
             SpawnList.SetComponents(eq, filters, this);
+            // Default sort: alert mobs (Hunt/Caution/Danger/Rare) pinned to the top, then by name.
+            SpawnList.listView.ListViewItemSorter = new ListViewComparer(0, SortOrder.Ascending, alertFirst: true);
 
             // Set Spawn Timer Window Options
             LogLib.WriteLine("Creating SpawnTimerList Window", LogLevel.Debug);
@@ -1620,6 +1622,10 @@ namespace myseq
             filters.ClearLists();
 
             filters.LoadAlerts(CurZone);
+
+            // Re-evaluate already-visible spawns so added/removed filters apply immediately
+            // (bold + pinned to top) instead of only on the next respawn.
+            eq.ReapplyAlerts(SpawnList);
 
             timDelayAlerts.Start();
 

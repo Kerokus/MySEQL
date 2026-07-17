@@ -966,6 +966,49 @@ namespace myseq
             }
         }
 
+        // Bold the spawn's list row when it matches an alert filter; plain otherwise.
+        private static void ApplyAlertFont(ListViewItem item, Spawninfo si)
+        {
+            var baseFont = Settings.Default.ListFont ?? System.Drawing.SystemFonts.DefaultFont;
+            item.Font = si.HasAlert ? new Font(baseFont, FontStyle.Bold) : baseFont;
+        }
+
+        // Recompute a spawn's alert flags against the current filter lists (no name-prefix changes).
+        private void RecheckAlertFlags(Spawninfo si)
+        {
+            si.isHunt = si.isCaution = si.isDanger = si.isAlert = false;
+
+            if (IsSpecialSpawn(si) || (si.isCorpse && !CorpseAlerts))
+            {
+                return;
+            }
+
+            var mobname = si.isMerc ? si.Name.FixMobNameMatch() : si.Name.FixMobName();
+            var matchmobname = mobname.FixMobNameMatch();
+            if (matchmobname.Length < 2)
+            {
+                matchmobname = mobname;
+            }
+
+            if (FindMatches(Filters.Hunt, matchmobname, FullTxtH) || FindMatches(Filters.GlobalHunt, matchmobname, FullTxtH)) si.isHunt = true;
+            if (FindMatches(Filters.Caution, matchmobname, FullTxtC) || FindMatches(Filters.GlobalCaution, matchmobname, FullTxtC)) si.isCaution = true;
+            if (FindMatches(Filters.Danger, matchmobname, FullTxtD) || FindMatches(Filters.GlobalDanger, matchmobname, FullTxtD)) si.isDanger = true;
+            if (FindMatches(Filters.Alert, matchmobname, FullTxtA) || FindMatches(Filters.GlobalAlert, matchmobname, FullTxtA)) si.isAlert = true;
+        }
+
+        // Re-evaluate every visible spawn against the current filters, restyle, and re-sort. Called when a
+        // filter is added/removed so alerts apply to already-visible mobs without waiting for a respawn.
+        public void ReapplyAlerts(ListViewPanel SpawnList)
+        {
+            foreach (Spawninfo sp in GetMobsReadonly())
+            {
+                if (sp.listitem == null) continue;
+                RecheckAlertFlags(sp);
+                ApplyAlertFont(sp.listitem, sp);
+            }
+            SpawnList?.listView?.Sort();
+        }
+
         private void SetWieldedNames(Spawninfo si)
         {
             // Set names based on whether there are valid items in Primary and Offhand
@@ -993,8 +1036,10 @@ namespace myseq
             // Create a new ListViewItem with the main text (mob name with info)
             var listViewItem = new ListViewItem(mobnameWithInfo)
             {
-                ForeColor = GetSpawnListColors(si) // Set the initial color for the list item
+                ForeColor = GetSpawnListColors(si), // Set the initial color for the list item
+                Tag = si                            // back-reference for the alert-priority sorter
             };
+            ApplyAlertFont(listViewItem, si);       // bold row when the mob matches an alert filter
 
             // Create a list of subitems with formatted values and add them in one go
             var subItems = new List<string>
@@ -1229,7 +1274,10 @@ namespace myseq
                     }
                 }
                 if (items.Count > 0)
-                { SpawnList.listView.Items.AddRange(items.ToArray()); }
+                {
+                    SpawnList.listView.Items.AddRange(items.ToArray());
+                    SpawnList.listView.Sort();   // keep alert mobs pinned to the top
+                }
                 NewSpawns.Clear();
             }
             catch (Exception ex) { LogLib.WriteLine("Error in ProcessSpawnList(): ", ex); }

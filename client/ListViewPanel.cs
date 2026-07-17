@@ -690,7 +690,8 @@ namespace myseq
             // Ensure listView is not null.
             if (listView != null)
             {
-                listView.ListViewItemSorter = new ListViewComparer(e.Column, sortOrder);
+                // Spawn list (ListType 0) keeps alert mobs pinned to the top under any column sort.
+                listView.ListViewItemSorter = new ListViewComparer(e.Column, sortOrder, alertFirst: ListType == 0);
                 listView.Sort();  // Trigger the sorting immediately.
             }
         }

@@ -1,3 +1,4 @@
+using Structures;
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -5,16 +6,17 @@ using System.Windows.Forms;
 namespace myseq
 {
     // Compares two ListView items based on a selected column.
-    // Compares two ListView items based on a selected column.
     public class ListViewComparer : IComparer
     {
         private readonly int ColumnNumber;
         private readonly SortOrder SortOrder;
+        private readonly bool AlertFirst;
 
-        public ListViewComparer(int columnNumber, SortOrder sortOrder)
+        public ListViewComparer(int columnNumber, SortOrder sortOrder, bool alertFirst = false)
         {
             ColumnNumber = columnNumber;
             SortOrder = sortOrder;
+            AlertFirst = alertFirst;
         }
 
         // Compare two ListViewItems.
@@ -23,6 +25,15 @@ namespace myseq
             // Get the objects as ListViewItems.
             var item_x = x as ListViewItem;
             var item_y = y as ListViewItem;
+
+            // Alert mobs are always pinned above non-alert mobs, regardless of the active column/order
+            // (spawn list only; item.Tag holds the Spawninfo).
+            if (AlertFirst)
+            {
+                bool ax = (item_x?.Tag as Spawninfo)?.HasAlert == true;
+                bool ay = (item_y?.Tag as Spawninfo)?.HasAlert == true;
+                if (ax != ay) return ax ? -1 : 1;
+            }
 
             // Get the corresponding sub-item values.
             var string_x = item_x?.SubItems.Count > ColumnNumber ? item_x.SubItems[ColumnNumber].Text : "";

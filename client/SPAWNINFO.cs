@@ -57,6 +57,10 @@ namespace Structures
 
         public bool isAlert { get; set; }
 
+        // True when this spawn matches any alert filter (Hunt/Caution/Danger/Rare). Drives the spawn
+        // list's bold styling and "pinned to top" sort.
+        public bool HasAlert => isHunt || isCaution || isDanger || isAlert;
+
         public bool isPet { get; set; }
 
         public bool isMerc { get; set; }
