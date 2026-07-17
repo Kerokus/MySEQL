@@ -60,7 +60,16 @@ namespace myseq
         private string[] Races;
         public string GConBaseName { get; set; } = "";
 
-        public Hashtable GetMobsReadonly() => mobsHashTable;
+        // Thread-safe snapshot of the mobs for enumeration. The socket receive thread mutates the backing
+        // Hashtable (Add/Remove/Clear) while the UI thread reads it for tooltips and map drawing; iterating
+        // the live collection across threads throws "Collection was modified". Callers enumerate this copy.
+        public Spawninfo[] GetMobsReadonly()
+        {
+            lock (mobsHashTable.SyncRoot)
+            {
+                return mobsHashTable.Values.Cast<Spawninfo>().ToArray();
+            }
+        }
 
         public List<GroundItem> GetItemsReadonly() => itemcollection;
 
@@ -149,7 +158,7 @@ namespace myseq
 
         public Spawninfo FindMob(float x, float y, float delta, bool excludePet = false, bool excludePlayer = false, bool excludeCorpse = false)
         {
-            foreach (Spawninfo sp in mobsHashTable.Values)
+            foreach (Spawninfo sp in GetMobsReadonly())
             {
                 if (ShouldExcludeMob(sp, excludePet, excludePlayer, excludeCorpse))
                 {
@@ -196,7 +205,7 @@ namespace myseq
 
         private Spawninfo FindMobTimer(string spawnLoc)
         {
-            foreach (Spawninfo sp in mobsHashTable.Values)
+            foreach (Spawninfo sp in GetMobsReadonly())
             {
                 if ((sp.SpawnLoc == spawnLoc) && (sp.Type == 1))
                 {
@@ -270,7 +279,7 @@ namespace myseq
 
             ProcessGroundItems(itemcollection, deletedGroundItems);
 
-            foreach (Spawninfo sp in mobsHashTable.Values)
+            foreach (Spawninfo sp in GetMobsReadonly())
             {
                 if (sp.delFromList)
                 {
@@ -338,7 +347,10 @@ namespace myseq
                 SpawnList.listView.Items.Remove(sp.listitem);
                 sp.listitem = null;
 
-                mobsHashTable.Remove(sp.SpawnID); // Assuming mobsHashTable uses SpawnID as the key
+                lock (mobsHashTable.SyncRoot)
+                {
+                    mobsHashTable.Remove(sp.SpawnID); // Assuming mobsHashTable uses SpawnID as the key
+                }
             }
 
             foreach (var sp in delListItems)
@@ -410,7 +422,7 @@ namespace myseq
 
                     DefaultSpawnLoc();
 
-                    foreach (Spawninfo sp in mobsHashTable.Values)
+                    foreach (Spawninfo sp in GetMobsReadonly())
                     {
                         if (sp.SpawnID == EQSelectedID)
                         {
@@ -676,7 +688,10 @@ namespace myseq
             }
             MobsTimers.Spawn(si);
             IsSpawnInFilterLists(si);
-            mobsHashTable.Add(si.SpawnID, si);
+            lock (mobsHashTable.SyncRoot)
+            {
+                mobsHashTable.Add(si.SpawnID, si);
+            }
         }
 
         private static void Tainted_Egg(Spawninfo si)
@@ -1081,7 +1096,7 @@ namespace myseq
         {
             if (mobsHashTable != null)
             {
-                foreach (Spawninfo si in mobsHashTable.Values)
+                foreach (Spawninfo si in GetMobsReadonly())
                 {
                     if (si.listitem != null)
                     {
@@ -1106,7 +1121,7 @@ namespace myseq
                 sw.WriteLine("Name\t\tLevel\tClass\t\tRace\tLastname\t\tType\tInvis\tSpawnID\tX\tY\tZ");
 
                 // Iterate over mobs and write their details to the file
-                foreach (Spawninfo spawn in mobsHashTable.Values)
+                foreach (Spawninfo spawn in GetMobsReadonly())
                 {
                     var line = $"{spawn.Name}\t\t{spawn.Level}\t\t{GetClass(spawn.Class)}\t{GetRace(spawn.Race)}\t{spawn.Lastname}\t{spawn.Type.GetSpawnType()}\t{spawn.Hide.GetHideStatus()}\t{spawn.SpawnID}\t{spawn.Y}\t{spawn.X}\t{spawn.Z}";
                     sw.WriteLine(line);
@@ -1333,7 +1348,10 @@ namespace myseq
 
         public void Clear()
         {
-            mobsHashTable.Clear();
+            lock (mobsHashTable.SyncRoot)
+            {
+                mobsHashTable.Clear();
+            }
             itemcollection.Clear();
         }
 

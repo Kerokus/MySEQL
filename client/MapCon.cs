@@ -1516,7 +1516,7 @@ namespace myseq
                 map.trails.CountMobTrails(eq);
                 // Draw Spawns
 
-                foreach (Spawninfo sp in eq.GetMobsReadonly().Values)
+                foreach (Spawninfo sp in eq.GetMobsReadonly())
                 {
                     var sPoint = new PointF(
                     (float)Math.Round(CalcScreenCoordX(sp.X), 0),
@@ -1764,7 +1764,7 @@ namespace myseq
             var npcCorpseDepthFilter = Settings.Default.DepthFilter && Settings.Default.FilterNPCCorpses;
 
             // Iterate through all spawns
-            foreach (Spawninfo sp in eq.GetMobsReadonly().Values)
+            foreach (Spawninfo sp in eq.GetMobsReadonly())
             {
                 if (!sp.isCorpse || sp.hidden)
                 {

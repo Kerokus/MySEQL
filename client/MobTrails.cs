@@ -50,7 +50,7 @@ namespace myseq
 
         private void CollectMobTrails(EQData eq)
         {
-            foreach (Spawninfo sp in eq.GetMobsReadonly().Values)
+            foreach (Spawninfo sp in eq.GetMobsReadonly())
             {
                 if (sp.Type == 1)
                 {

@@ -42,7 +42,7 @@ namespace myseq
             SetSearchParameters(name, filterMob);
 
             // Loop through all spawns and update their properties based on the search criteria.
-            foreach (Spawninfo sp in eq.GetMobsReadonly().Values)
+            foreach (Spawninfo sp in eq.GetMobsReadonly())
             {
                 UpdateSpawnLookup(sp);
             }
