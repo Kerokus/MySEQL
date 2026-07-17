@@ -1401,11 +1401,11 @@ namespace myseq
 
             if (si.Primary > 0)
             {
-                mobInfo.AppendFormat("Class: {0}    Primary: {1} ({2})\n", eq.GetClass(si.Class), si.PrimaryName, si.Primary);
+                mobInfo.AppendFormat("Class: {0}    Primary: {1} ({2})\n", eq.ClassAbbrevCombo(si), si.PrimaryName, si.Primary);
             }
             else
             {
-                mobInfo.AppendFormat("Class: {0}\n", eq.GetClass(si.Class));
+                mobInfo.AppendFormat("Class: {0}\n", eq.ClassAbbrevCombo(si));
             }
 
             if (si.Offhand > 0)
@@ -1460,7 +1460,7 @@ namespace myseq
 
             mobInfo.AppendFormat("Level {0} / {1}\n", si.Level.ToString(), si.Hide.GetHideStatus());
 
-            mobInfo.AppendFormat("{0} / {1}\n", eq.GetRace(si.Race), eq.GetClass(si.Class));
+            mobInfo.AppendFormat("{0} / {1}\n", eq.GetRace(si.Race), eq.ClassAbbrevCombo(si));
 
             mobInfo.AppendFormat("Speed: {0:f3}  Dist: {1:f0}\n", si.SpeedRun, SpawnDistance(si));
 

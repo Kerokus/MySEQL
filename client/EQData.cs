@@ -1141,6 +1141,26 @@ namespace myseq
         // Secondary/tertiary class columns: 0 means "no extra class" -> blank (not "Unknown0").
         public string ClassOpt(int num) => num == 0 ? "" : GetClass(num);
 
+        // Standard EQ 3-letter class codes for the 16 player classes.
+        private static readonly string[] ClassAbbrevs =
+        {
+            "", "WAR", "CLR", "PAL", "RNG", "SHD", "DRU", "MNK", "BRD", "ROG",
+            "SHM", "NEC", "WIZ", "MAG", "ENC", "BST", "BER"
+        };
+
+        // 3-letter code for a player class; falls back to the full name for NPC classes (Shopkeeper...).
+        public string ClassAbbrev(int id) => (id >= 1 && id <= 16) ? ClassAbbrevs[id] : GetClass(id);
+
+        // Combined abbreviated class string for tooltips, e.g. "MNK/SHM/NEC" (multiclass) or "WAR".
+        public string ClassAbbrevCombo(Spawninfo si)
+        {
+            var parts = new List<string>();
+            if (si.Class != 0) parts.Add(ClassAbbrev(si.Class));
+            if (si.Class2 != 0) parts.Add(ClassAbbrev(si.Class2));
+            if (si.Class3 != 0) parts.Add(ClassAbbrev(si.Class3));
+            return parts.Count > 0 ? string.Join("/", parts) : GetClass(si.Class);
+        }
+
         public string GetRace(int num) => num == 2250 ? "Interactive Object" : ArrayIndextoStr(Races, num);
 
         private string ItemNumToString(int num)
