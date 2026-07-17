@@ -49,6 +49,9 @@ void Spawn::init(IniReaderInterface* ir_intf)
 	// EQL: class field is a bitmask, not an id byte (see Spawn.h). Off (0) = classic id-byte behavior.
 	classIsBitmask = (ir_intf->readIntegerEntry("SpawnInfo Offsets", "ClassIsBitmask") != 0);
 
+	// EQL: Hide field is a signed invis-type int32, not a hide-enum byte (see Spawn.h). Off (0) = classic byte.
+	hideIsInvisType = (ir_intf->readIntegerEntry("SpawnInfo Offsets", "HideIsInvisType") != 0);
+
 	setOffset(OT_name, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "NameOffset"), "First Name");
 	setOffset(OT_lastname, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "LastNameOffset"), "Last Name");
 	setOffset(OT_x, (UINT)ir_intf->readIntegerEntry("SpawnInfo Offsets", "XOffset"), "X");
@@ -148,7 +151,22 @@ void Spawn::packNetBufferRaw(UINT flags, QWORD _this)
 	}
 	tempNetBuffer.level = extractRawByte(OT_level);
 
-	tempNetBuffer.hidden = extractRawByte(OT_hidden);
+	if (hideIsInvisType) {
+		// EQL stores invis as a signed int32 at HideOffset (live-verified on the local player):
+		//   0 = visible, 1 = invisible, -2 = invis-vs-undead, -1 = invis-vs-animals.
+		// Translate to MySEQ's Hide enum (0 Vis,1 Invis,2 Hidden,3 IVU,4 IVA) so the client's
+		// hide-status label resolves correctly with no client change.
+		switch (extractRawInt(OT_hidden)) {
+		case  0: tempNetBuffer.hidden = 0; break;  // visible
+		case  1: tempNetBuffer.hidden = 1; break;  // invisible
+		case -2: tempNetBuffer.hidden = 3; break;  // invis vs undead
+		case -1: tempNetBuffer.hidden = 4; break;  // invis vs animals
+		default: tempNetBuffer.hidden = 1; break;  // any other nonzero invis state -> Invisible
+		}
+	}
+	else {
+		tempNetBuffer.hidden = extractRawByte(OT_hidden);
+	}
 }
 
 void Spawn::packNetBufferEmpty(UINT flags, QWORD _this)

@@ -494,6 +494,8 @@ namespace myseq
 
                         GetMobOwner(si, mob);
 
+                        GetMobInvis(si, mob);
+
                         //if (mob.Guild != si.Guild)
                         //{
                         //    mob.Guild = si.Guild;
@@ -574,6 +576,16 @@ namespace myseq
             {
                 mob.OwnerID = si.OwnerID;
                 MobHasOwner(mob);
+            }
+        }
+
+        // Refresh the Invis column (10) whenever a spawn's invis state changes. Previously this only
+        // ran inside GetMobOwner (OwnerID != 0), so for regular spawns/the player — OwnerID is 0 in EQL —
+        // the column froze at its creation-time value and never reflected a live invis/IVU/IVA.
+        private void GetMobInvis(Spawninfo si, Spawninfo mob)
+        {
+            if (mob.Hide != si.Hide)
+            {
                 mob.Hide = si.Hide;
                 mob.listitem.SubItems[10].Text = si.Hide.GetHideStatus();
             }

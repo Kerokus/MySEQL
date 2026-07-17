@@ -96,6 +96,11 @@ private:
 	// class id) so the client's class-name table resolves it normally. Controlled by ini ClassIsBitmask.
 	bool classIsBitmask{};
 
+	// EQL: invis is a signed int32 at HideOffset (0 visible, 1 invisible, -2 invis-vs-undead,
+	// -1 invis-vs-animals) rather than a small hide-enum byte. When set, read it as an int and map
+	// to MySEQ's Hide enum (0 Vis,1 Invis,2 Hidden,3 IVU,4 IVA). Controlled by ini HideIsInvisType.
+	bool hideIsInvisType{};
+
 	static BYTE lowestSetBitIndex(DWORD mask)
 	{
 		if (mask == 0) return 0;
