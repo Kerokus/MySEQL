@@ -114,8 +114,16 @@ namespace Structures
 
         private static string FormatStrings(string inp)
         {
+            // Old ShowEQ/SEQ format: <oldfilter><regex>Name:VALUE</regex></oldfilter> -> pull out VALUE.
             var match = Regex.Match(inp, @"name:\s*(?<name>.*?)<\/", RegexOptions.IgnoreCase);
-            return match.Success ? match.Groups["name"].Value.Trim() : string.Empty;
+            if (match.Success)
+            {
+                return match.Groups["name"].Value.Trim();
+            }
+            // Tolerate a bare name line (recovers files saved by the plain-line writer). Ignore any
+            // other stray XML tag lines so only real filter entries are added.
+            var trimmed = inp.Trim();
+            return trimmed.StartsWith("<") ? string.Empty : trimmed;
         }
 
         private void DetermineType(int type, string inputstring, string zoneName)
@@ -243,9 +251,11 @@ namespace Structures
 
         private static void AddNameFromList(List<string> lines, List<string> alertlist)
         {
+            // Write the ShowEQ/SEQ "oldfilter" format so files round-trip through the loader and stay
+            // compatible with the wider SEQ ecosystem (the seqfilters.dtd schema).
             foreach (var str in alertlist)
             {
-                lines.Add(str);
+                lines.Add($"        <oldfilter><regex>Name:{str}</regex></oldfilter>");
             }
         }
 

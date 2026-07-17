@@ -252,16 +252,16 @@
       <Value Profile="(Default)">200</Value>
     </Setting>
     <Setting Name="MatchFullTextH" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MatchFullTextC" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MatchFullTextD" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MatchFullTextA" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HuntPrefix" Type="System.String" Scope="User">
       <Value Profile="(Default)"> [H]</Value>

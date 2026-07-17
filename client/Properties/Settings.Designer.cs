@@ -1033,7 +1033,7 @@ namespace myseq.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool MatchFullTextH {
             get {
                 return ((bool)(this["MatchFullTextH"]));
@@ -1045,7 +1045,7 @@ namespace myseq.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool MatchFullTextC {
             get {
                 return ((bool)(this["MatchFullTextC"]));
@@ -1057,7 +1057,7 @@ namespace myseq.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool MatchFullTextD {
             get {
                 return ((bool)(this["MatchFullTextD"]));
@@ -1069,7 +1069,7 @@ namespace myseq.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool MatchFullTextA {
             get {
                 return ((bool)(this["MatchFullTextA"]));
