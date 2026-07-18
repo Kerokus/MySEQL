@@ -1721,6 +1721,10 @@ namespace myseq
 
             if (dlgBox.ShowDialog() == DialogResult.OK && dlgBox.dlgTextBox.Length > 0)
             {
+                // The user's edited text is published here for callers to read back. Callers must use
+                // this (SpawnList.Mobname), NOT their original input string, or the edit is dropped --
+                // e.g. renaming "a lion" to "Brother Qwinn" would otherwise still add "a lion" to the
+                // filter and light up every lion in the zone.
                 SpawnList.Mobname = dlgBox.dlgTextBox;
                 SpawnTimerList.Mobname = dlgBox.dlgTextBox;
                 return true;
@@ -2098,7 +2102,7 @@ namespace myseq
         {
             if (DialogBox("Add to Zone Hunt Filters", "Add name to Hunt list:", alertAddmobname))
             {
-                AddToFilter(Filters.Hunt, alertAddmobname);
+                AddToFilter(Filters.Hunt, SpawnList.Mobname);
             }
         }
 
@@ -2106,7 +2110,7 @@ namespace myseq
         {
             if (DialogBox("Add to Zone Caution Filters", "Add name to Caution list:", alertAddmobname))
             {
-                AddToFilter(Filters.Caution, alertAddmobname);
+                AddToFilter(Filters.Caution, SpawnList.Mobname);
             }
         }
 
@@ -2114,7 +2118,7 @@ namespace myseq
         {
             if (DialogBox("Add to Zone Danger Alert Filters", "Add name to Danger list:", alertAddmobname))
             {
-                AddToFilter(Filters.Danger, alertAddmobname);
+                AddToFilter(Filters.Danger, SpawnList.Mobname);
             }
         }
 
@@ -2122,7 +2126,7 @@ namespace myseq
         {
             if (DialogBox("Add to Zone Rare Alert Filters", "Add name to Rare list:", alertAddmobname))
             {
-                AddToFilter(Filters.Alert, alertAddmobname);
+                AddToFilter(Filters.Alert, SpawnList.Mobname);
             }
         }
 
