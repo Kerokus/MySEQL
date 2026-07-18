@@ -296,9 +296,14 @@ namespace myseq
                 }
             }
 
-            // Remove any that have been marked for deletion
-            bool updateGroundList = Zoning || deletedGroundItems.Count > 2;
-            bool updateSpawnList = deletedSpawns.Count > 5 || delListItems.Count > 2;
+            // Remove any that have been marked for deletion. Trigger on ANY pending removal (>0), not a
+            // batch threshold: an entry only lands in deletedSpawns after being absent for two full
+            // update cycles (the ShouldBeDeleted 2-strike above), so it's genuinely gone. The old
+            // ">5 / >2" gate left a lone straggler stuck forever -- e.g. the transient extra player
+            // actor that lingers in the engine list right after zoning, then never ages out, so you
+            // showed up on the spawn list twice until a manual "Refresh Spawn List".
+            bool updateGroundList = Zoning || deletedGroundItems.Count > 0;
+            bool updateSpawnList = deletedSpawns.Count > 0 || delListItems.Count > 0;
 
             if (updateGroundList)
             {

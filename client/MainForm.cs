@@ -652,6 +652,13 @@ namespace myseq
 
                 CheckZoneFile();
 
+                // Zone changed (this handler is server-gated to fire only on a real zone change, and
+                // arrives before this batch's spawn packets). Reset per-zone state so stale entries from
+                // the previous zone don't linger -- notably the old-zone player record, which is the lone
+                // straggler the batched >5 aging never purges, causing "you appear twice after zoning".
+                // The new zone's spawns repopulate from the spawn packets that follow in the same batch.
+                ClearMap();
+
                 // Turn off collecting mob trails anytime load a new map
 
                 mnuCollectMobTrails.Checked = Settings.Default.CollectMobTrails = false;
