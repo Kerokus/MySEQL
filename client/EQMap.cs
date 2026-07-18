@@ -114,6 +114,7 @@ namespace myseq
             eq.MobsTimers.ResetTimers();
             OnExitMap();
             trails.Clear();
+            mapData.Clear();   // actually drop the previous zone's lines/labels (Update alone only recomputed bounds)
             mapData.Update();
         }
 
@@ -122,6 +123,7 @@ namespace myseq
             LogLib.WriteLine($"Loading Dummy Map", LogLevel.Debug);
             OnExitMap();
             trails.Clear();
+            mapData.Clear();   // blank the map while zoning/for missing maps, instead of leaving the old zone drawn
             mapData.Update();
             OnEnterMap();
         }

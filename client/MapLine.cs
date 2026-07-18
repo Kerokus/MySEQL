@@ -172,6 +172,17 @@ namespace myseq
             return (minX, maxX, minY, maxY, minZ, maxZ);
         }
 
+        public void Clear()
+        {
+            // Empty the geometry so a new zone's map replaces the old one instead of stacking on
+            // top of it. Without this, LoadMapData (which only ever Adds) accumulates every zone
+            // visited -> maps layer (e.g. North + South Karana drawn together).
+            LineSegments.Clear();
+            Labels.Clear();
+            MinX = MinY = MinZ = -1000;
+            MaxX = MaxY = MaxZ = 1000;
+        }
+
         public void Update()
         {
             MinX = GetBounds().minX;
