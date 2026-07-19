@@ -103,13 +103,14 @@ namespace Structures
             }
         }
 
-        // EQ Legends con set. Empirically reversed from live in-game observation (player levels 10, 15
-        // and 47; see reversing notes eql-con-data.csv). Two findings:
+        // EQ Legends con set. Empirically reversed from live in-game observation (see eql-con-data.csv).
         //   1. Trivial end (grey / green / light-blue boundaries) tracks the classic per-level table
         //      within +/-1, so we reuse ConLevels.Ini for those exactly like the Default set does.
-        //   2. The real EQL difference is a much WIDER yellow band. Classic is a flat +3 (red at +4);
-        //      EQL runs yellow to +5 at low level, widening to +6 by ~L47, with red one level past.
-        //      YellowRange = 5 + level/40 reproduces every measured point (L10/L15 -> +5, L47 -> +6).
+        //   2. The EQL difference is a WIDER yellow band than classic (which is +3, red at +4). Every
+        //      reliable measurement (L10, L15, L48, L49) puts yellow at a FLAT +5, with red at +6. The
+        //      lone L47 "+6" was an off-by-one at the boundary (contradicted by the fresh L48 = +5), so
+        //      the old `5 + level/40` was overfit -- its integer /40 widened all of L40-79 to +6 and
+        //      mis-conned mobs one level too high. Flat +5 until/unless the binary says otherwise.
         private void EQLCon(int level)
         {
             var Ini = new IniFile("ConLevels.Ini");
@@ -119,7 +120,7 @@ namespace Structures
             GreenRange = int.Parse(ConLevels[1]) - level + 1;
             CyanRange = int.Parse(ConLevels[2]) - level + 1;
 
-            YellowRange = 5 + level / 40;   // +5 low, +6 by L47; red starts at level + YellowRange + 1
+            YellowRange = 5;   // yellow = level+1 .. level+5; red starts at level+6
         }
 
         private void ConLevelFile(int level)
