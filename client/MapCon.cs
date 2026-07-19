@@ -2068,74 +2068,28 @@ namespace myseq
 
                         foreach (LineSegment mapLine in mapData.LineSegments)
                         {
-                            // All the points in this set of lines are good
-                            if (mapLine.Start.Z > minZ || mapLine.Start.Z < maxZ || mapLine.End.Z > minZ || mapLine.End.Z < maxZ)
+                            // Keep the segment if either endpoint is inside the current depth
+                            // window (same window the spawns/labels use). Otherwise it belongs
+                            // to another floor: fade it if dynamic alpha is on, else hide it.
+                            if (IsWithinDepthFilter(mapLine.Start.Z, minZ, maxZ) ||
+                                IsWithinDepthFilter(mapLine.End.Z, minZ, maxZ))
                             {
                                 DrawLines(mapLine.LineColor, mapLine.Start, mapLine.End);
                             }
-                            else if (mapLine.Start.Z < minZ || mapLine.Start.Z > maxZ || mapLine.End.Z < minZ || mapLine.End.Z < maxZ)
+                            else if (Settings.Default.UseDynamicAlpha)
                             {
-                                DrawLines(mapLine.LineColor, mapLine.Start, mapLine.End);
+                                var alpha = Settings.Default.FadedLines * 255 / 100;
+                                using (Pen fade = new Pen(Color.FromArgb(alpha, mapLine.LineColor)))
+                                {
+                                    DrawLine(fade, mapLine.Start.X, mapLine.Start.Y, mapLine.End.X, mapLine.End.Y);
+                                }
                             }
-                            else
-                            {
-                                AlphaFiltering(minZ, maxZ, mapLine);
-                            }
+                            // else: outside the depth window and no fade -> filtered out (draw nothing)
                         }
                     }
                 }
             }
             catch (Exception ex) { LogLib.WriteLine("Error in DrawMapLines(): ", ex); }
-        }
-
-        private void AlphaFiltering(float minZ, float maxZ, LineSegment mapLine)
-        {
-            bool curValid, lastValid;
-
-            float curX, curY, curZ, lastX, lastY, lastZ;
-
-            lastX = mapLine.Start.X;
-
-            lastY = mapLine.Start.Y;
-
-            lastZ = mapLine.Start.Z;
-
-            lastValid = (lastZ > minZ) && (lastZ < maxZ);
-
-            for (var d = 1; d < mapData.LineSegments.Count; d++)
-            {
-                curX = mapLine.Start.X;
-
-                curY = mapLine.Start.Y;
-
-                curZ = mapLine.Start.Z;
-
-                curValid = (curZ > minZ) && (curZ < maxZ);
-
-                // Original Depth Filter method (use z-axis values only)
-
-                // instead of not drawing filtered lines, we draw light ones
-
-                if (!curValid && !lastValid)
-                {
-                    if (Settings.Default.UseDynamicAlpha)
-                    {
-                        var alpha = Settings.Default.FadedLines * 255 / 100;
-                        using (Pen Fade_color = new Pen(Color.FromArgb(alpha, mapLine.LineColor)))
-                        { DrawLine(Fade_color, lastX, lastY, curX, curY); }
-                    }
-                }
-                else
-                {
-                    DrawLine(new Pen(mapLine.LineColor), lastX, lastY, curX, curY);
-                }
-
-                lastX = curX;
-
-                lastY = curY;
-
-                lastValid = curValid;
-            }
         }
 
         private void MinMaxFilter(out float minZ, out float maxZ)
