@@ -423,6 +423,8 @@ namespace myseq
 
             mnuConSoF.Checked = Settings.Default.SoFCon;
 
+            mnuConEQL.Checked = Settings.Default.EQLCon;
+
             mnuShowPCNames.Checked = mnuShowPCNames2.Checked = Settings.Default.ShowPCNames;
 
             mnuShowNPCNames.Checked = mnuShowNPCNames2.Checked = Settings.Default.ShowNPCNames;
@@ -1873,41 +1875,29 @@ namespace myseq
             Settings.Default.ShowLayer3 = mnuShowLayer3.Checked;
         }
 
-        private void MnuSodTitanium_Click(object sender, EventArgs e)
+        // Con-color sets are mutually exclusive (radio behavior). One helper keeps the four menu
+        // checks and the four Settings flags in lockstep so adding a set can't desync them.
+        private void SetConMode(bool sod, bool sof, bool def, bool eql)
         {
-            mnuConSoD.Checked = true;
-            mnuConSoF.Checked = false;
-            mnuConDefault.Checked = false;
-            Settings.Default.SoDCon = true;
-            Settings.Default.SoFCon = false;
-            Settings.Default.DefaultCon = false;
+            mnuConSoD.Checked = sod;
+            mnuConSoF.Checked = sof;
+            mnuConDefault.Checked = def;
+            mnuConEQL.Checked = eql;
+            Settings.Default.SoDCon = sod;
+            Settings.Default.SoFCon = sof;
+            Settings.Default.DefaultCon = def;
+            Settings.Default.EQLCon = eql;
             spawnColors.FillConColors(eq.GamerInfo);
             eq.UpdateMobListColors();
         }
 
-        private void MnuConDefault_Click(object sender, EventArgs e)
-        {
-            mnuConSoD.Checked = false;
-            mnuConSoF.Checked = false;
-            mnuConDefault.Checked = true;
-            Settings.Default.SoDCon = false;
-            Settings.Default.SoFCon = false;
-            Settings.Default.DefaultCon = true;
-            spawnColors.FillConColors(eq.GamerInfo);
-            eq.UpdateMobListColors();
-        }
+        private void MnuSodTitanium_Click(object sender, EventArgs e) => SetConMode(sod: true, sof: false, def: false, eql: false);
 
-        private void MnuConSoF_Click(object sender, EventArgs e)
-        {
-            mnuConSoD.Checked = false;
-            mnuConSoF.Checked = true;
-            mnuConDefault.Checked = false;
-            Settings.Default.SoDCon = false;
-            Settings.Default.SoFCon = true;
-            Settings.Default.DefaultCon = false;
-            spawnColors.FillConColors(eq.GamerInfo);
-            eq.UpdateMobListColors();
-        }
+        private void MnuConDefault_Click(object sender, EventArgs e) => SetConMode(sod: false, sof: false, def: true, eql: false);
+
+        private void MnuConSoF_Click(object sender, EventArgs e) => SetConMode(sod: false, sof: true, def: false, eql: false);
+
+        private void MnuConEQL_Click(object sender, EventArgs e) => SetConMode(sod: false, sof: false, def: false, eql: true);
 
         private void MnuShowPCNames_Click(object sender, EventArgs e)
         {

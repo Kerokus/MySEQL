@@ -153,6 +153,7 @@ namespace myseq
             this.mnuConDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuConSoD = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuConSoF = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuConEQL = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuGridInterval = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuGridInterval100 = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuGridInterval250 = new System.Windows.Forms.ToolStripMenuItem();
@@ -1277,7 +1278,8 @@ namespace myseq
             this.mnuConColors.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuConDefault,
             this.mnuConSoD,
-            this.mnuConSoF});
+            this.mnuConSoF,
+            this.mnuConEQL});
             this.mnuConColors.Name = "mnuConColors";
             this.mnuConColors.Size = new System.Drawing.Size(195, 22);
             this.mnuConColors.Text = "Con Colors";
@@ -1302,7 +1304,14 @@ namespace myseq
             this.mnuConSoF.Size = new System.Drawing.Size(172, 22);
             this.mnuConSoF.Text = "Secrets of Faydwer";
             this.mnuConSoF.Click += new System.EventHandler(this.MnuConSoF_Click);
-            // 
+            //
+            // mnuConEQL
+            //
+            this.mnuConEQL.Name = "mnuConEQL";
+            this.mnuConEQL.Size = new System.Drawing.Size(172, 22);
+            this.mnuConEQL.Text = "EQ Legends";
+            this.mnuConEQL.Click += new System.EventHandler(this.MnuConEQL_Click);
+            //
             // mnuGridInterval
             // 
             this.mnuGridInterval.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2627,6 +2636,7 @@ namespace myseq
         private ToolStripMenuItem mnuConDefault;
         private ToolStripMenuItem mnuConSoD;
         private ToolStripMenuItem mnuConSoF;
+        private ToolStripMenuItem mnuConEQL;
         private ToolStripMenuItem mnuGridInterval;
         private ToolStripMenuItem mnuGridInterval100;
         private ToolStripMenuItem mnuGridInterval250;
